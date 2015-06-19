@@ -12,9 +12,11 @@
 ```
 
 ## Results
+These are the results from single threaded inserts from my macbook air to my macbook air. Don't use these results as a reference for absolute throughput. The results are only useful for a relative throughput comparison between drivers on the same (constrained) hardware and can be used as a proxy to judge efficency.
+
 
 ### C++
-Modified to log at ERROR and not insert into the set.
+Modified the ```examples/perf.c``` code to log at ERROR and not insert into the set.
 
 ```
 #define NUM_THREADS 1
