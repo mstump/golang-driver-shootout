@@ -51,11 +51,11 @@ table_definition: |
 #
 columnspec:
   - name: title
-    size: fixed(64)
+    size: fixed(448)
   - name: album
-    size: fixed(64)
+    size: fixed(448)
   - name: artist
-    size: fixed(64)
+    size: fixed(448)
 
 
 insert:
