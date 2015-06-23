@@ -50,6 +50,9 @@ final stats (microseconds): min 246 max 180095 median 8367 75th 12359 95th 22623
 ```
 
 ### GoLang Wrapping C++
+```
+go run src/golang/cpp-perf.go
+```
 
 ```
 ➜  golang-driver git:(master) ✗ go run examples/perf.go
@@ -88,6 +91,9 @@ DONE.
 ```
 
 ### GoLang
+```
+go run src/golang/gocql-perf.go
+```
 ```
 23 Jun 2015 08:18:56 | seconds : 00000005 | total : 0000039059 | succes : 1.00 | failure : 0.00 | P50 : 381.00 µs | P95 : 1860.00 µs | P99 : 404411.00 µs
 23 Jun 2015 08:19:01 | seconds : 00000010 | total : 0000084151 | succes : 1.00 | failure : 0.00 | P50 : 354.00 µs | P95 : 1474.00 µs | P99 : 240257.00 µs
