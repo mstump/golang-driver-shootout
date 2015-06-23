@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"golang-driver/cassandra"
+	"gopkg.in/mstump/golang-driver.v2/cassandra"
 	// "os"
 	"time"
 )
@@ -39,13 +39,22 @@ func main() {
 	session := cassandra.NewSession()
 	defer session.Finalize()
 
-	sessfuture := cluster.SessionConnect(session)
-	defer sessfuture.Finalize()
-	sessfuture.Wait()
-	if sessfuture.ErrorCode() != cassandra.CASS_OK {
-		printError(sessfuture)
+	sessFuture := cluster.SessionConnect(session)
+	defer sessFuture.Finalize()
+
+	sessFuture.Wait()
+	if sessFuture.ErrorCode() != cassandra.CASS_OK {
+		printError(sessFuture)
 		return
 	}
+
+	stateFuture := session.Prepare("INSERT INTO examples.songs (id, title, album, artist) VALUES (?, ?, ?, ?);")
+	stateFuture.Wait()
+	if stateFuture.ErrorCode() != cassandra.CASS_OK {
+		printError(stateFuture)
+		return
+	}
+	prepared := stateFuture.Prepared()
 
 	go func(quit chan bool) {
 		tick := time.NewTicker(time.Duration(reportInterval) * time.Second)
@@ -73,7 +82,7 @@ func main() {
 
 		for i := uint(0); i < concurrentRequests; i++ {
 			uuid := uuidGen.GenRandom()
-			statement := cassandra.NewStatement("INSERT INTO examples.songs (id, title, album, artist) VALUES (?, ?, ?, ?);", 4)
+			statement := prepared.Bind()
 			statement.Bind(uuid, bigString, bigString, bigString)
 			defer statement.Finalize()
 			futures[i] = session.Execute(statement)
@@ -93,7 +102,7 @@ func main() {
 
 	close(quit)
 	metrics := session.Metrics()
-	fmt.Printf("final stats (microseconds): min %llu max %llu median %llu 75th %llu 95th %llu 98th %llu 99th %llu 99.9th %llu\n",
+	fmt.Printf("final stats (microseconds): min %v max %v median %v 75th %v 95th %v 98th %v 99th %v 99.9th %v\n",
 		metrics.Requests.Min,
 		metrics.Requests.Max,
 		metrics.Requests.Median,
